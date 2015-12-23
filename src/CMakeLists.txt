@@ -164,9 +164,9 @@ if(NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
   set(OPTIMIZATION_FLAGS_LT "-O2 ${OPTIMIZATION_FLAGS_LT}")
 
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    set(OPTIMIZATION_FLAGS_CC "${OPTIMIZATION_FLAGS_CC} -fuse-linker-plugin -flto-report")
-    set(OPTIMIZATION_FLAGS_CC "${OPTIMIZATION_FLAGS_CC} -flto -fuse-ld=gold") #TODO fix LTO for clang
-    set(OPTIMIZATION_FLAGS_LT "${OPTIMIZATION_FLAGS_LT} -flto") #TODO LTO for clang too
+    set(OPTIMIZATION_FLAGS_CC "${OPTIMIZATION_FLAGS_CC} -fuse-linker-plugin")
+    set(OPTIMIZATION_FLAGS_CC "${OPTIMIZATION_FLAGS_CC} -fuse-ld=gold") #TODO fix LTO for clang
+    set(OPTIMIZATION_FLAGS_LT "${OPTIMIZATION_FLAGS_LT}") #TODO LTO for clang too
   endif()
 endif()
 
@@ -492,12 +492,13 @@ set_target_properties(${LIB_STATIC_NUPICCORE} PROPERTIES LINK_FLAGS
 # Add new library to common libs for rest of targets.
 set(COMMON_LIBS ${LIB_STATIC_NUPICCORE} ${COMMON_LIBS})
 
+
 #
 # Setup test_cpp_region
 #
 set(EXECUTABLE_CPPREGIONTEST cpp_region_test)
 add_executable(${EXECUTABLE_CPPREGIONTEST} test/integration/CppRegionTest.cpp)
-target_link_libraries(${EXECUTABLE_CPPREGIONTEST} ${COMMON_LIBS})
+target_link_libraries(${EXECUTABLE_CPPREGIONTEST} ${COMMON_LIBS} "-lyaml-cpp")
 set_target_properties(${EXECUTABLE_CPPREGIONTEST} PROPERTIES COMPILE_FLAGS ${COMMON_COMPILE_FLAGS})
 set_target_properties(${EXECUTABLE_CPPREGIONTEST} PROPERTIES LINK_FLAGS "${COMMON_LINK_FLAGS}")
 add_custom_target(tests_cpp_region
@@ -510,7 +511,7 @@ add_custom_target(tests_cpp_region
 #
 set(EXECUTABLE_PYREGIONTEST py_region_test)
 add_executable(${EXECUTABLE_PYREGIONTEST} test/integration/PyRegionTest.cpp)
-target_link_libraries(${EXECUTABLE_PYREGIONTEST} ${COMMON_LIBS})
+target_link_libraries(${EXECUTABLE_PYREGIONTEST} ${COMMON_LIBS} "-lyaml-cpp")
 set_target_properties(${EXECUTABLE_PYREGIONTEST}
                       PROPERTIES COMPILE_FLAGS ${COMMON_COMPILE_FLAGS})
 set_target_properties(${EXECUTABLE_PYREGIONTEST}
@@ -542,7 +543,7 @@ add_custom_target(tests_connections_performance
 #
 set(EXECUTABLE_HELLOREGION helloregion)
 add_executable(${EXECUTABLE_HELLOREGION} examples/regions/HelloRegions.cpp)
-target_link_libraries(${EXECUTABLE_HELLOREGION} ${COMMON_LIBS})
+target_link_libraries(${EXECUTABLE_HELLOREGION} ${COMMON_LIBS} "-lyaml-cpp")
 set_target_properties(${EXECUTABLE_HELLOREGION}
                       PROPERTIES COMPILE_FLAGS ${COMMON_COMPILE_FLAGS})
 set_target_properties(${EXECUTABLE_HELLOREGION}
@@ -622,8 +623,9 @@ add_executable(${EXECUTABLE_GTESTS}
                test/unit/utils/RandomTest.cpp
                test/unit/utils/WatcherTest.cpp)
 target_link_libraries(${EXECUTABLE_GTESTS}
+                      ${LIB_STATIC_YAML_LOC}
                       ${LIB_STATIC_GTEST}
-                      ${COMMON_LIBS})
+                      ${COMMON_LIBS} ""-lyaml-cpp"")
 set_target_properties(${EXECUTABLE_GTESTS}
                       PROPERTIES COMPILE_FLAGS ${COMMON_COMPILE_FLAGS}
                                  LINK_FLAGS "${COMMON_LINK_FLAGS}")
